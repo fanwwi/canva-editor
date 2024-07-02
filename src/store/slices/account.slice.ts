@@ -3,13 +3,8 @@ import {
   AccountType,
   AssessoirsType,
   CostumesType,
-  DetailsType,
-} from "../../types";
+} from "../types";
 import {
-  accountDetails,
-  getAccounts,
-  getAssessoirs,
-  getCostume,
   getOneAccount,
   getUserAss,
   getUserCostumes,
@@ -18,25 +13,17 @@ import {
 type StatesType = {
   error: null | string;
   loading: boolean;
-  allAccounts: AccountType[] | null;
   account: AccountType | null;
-  details: DetailsType | null;
-  allCostumes: CostumesType[] | null;
   userCostumes: CostumesType[] | null;
-  allAssessoirs: AssessoirsType[] | null;
-  userAss: AssessoirsType[] | null
+  userAss: AssessoirsType[] | null;
 };
 
 const INIT_STATE: StatesType = {
   error: null,
   loading: false,
-  allAccounts: null,
   account: null,
-  details: null,
-  allCostumes: null,
   userCostumes: null,
-  allAssessoirs: null,
-  userAss: null
+  userAss: null,
 };
 
 export const accountsSlice = createSlice({
@@ -45,18 +32,6 @@ export const accountsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getAccounts.fulfilled, (state, action) => {
-        state.loading = false;
-        state.allAccounts = action.payload;
-      })
-      .addCase(getAccounts.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message ?? "Ошибка при загрузки аккаунтов";
-      })
-      .addCase(getAccounts.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
       .addCase(getOneAccount.fulfilled, (state, action) => {
         state.loading = false;
         state.account = action.payload;
@@ -69,31 +44,6 @@ export const accountsSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(accountDetails.fulfilled, (state, action) => {
-        state.loading = false;
-        state.account = action.payload;
-      })
-      .addCase(accountDetails.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message ?? "Ошибка при загрузки аккаунтa";
-      })
-      .addCase(accountDetails.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(getCostume.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(getCostume.fulfilled, (state, action) => {
-        state.loading = false;
-        state.error = null;
-        state.allCostumes = action.payload;
-      })
-      .addCase(getCostume.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      })
       .addCase(getUserCostumes.pending, (state) => {
         state.loading = true;
       })
@@ -102,17 +52,6 @@ export const accountsSlice = createSlice({
         state.userCostumes = payload;
       })
       .addCase(getUserCostumes.rejected, (state) => {
-        state.loading = false;
-        console.log(state.error);
-      })
-      .addCase(getAssessoirs.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(getAssessoirs.fulfilled, (state, { payload }) => {
-        state.loading = true;
-        state.allAssessoirs = payload;
-      })
-      .addCase(getAssessoirs.rejected, (state) => {
         state.loading = false;
         console.log(state.error);
       })
@@ -126,7 +65,7 @@ export const accountsSlice = createSlice({
       .addCase(getUserAss.rejected, (state) => {
         state.loading = false;
         console.log(state.error);
-      })
+      });
   },
 });
 

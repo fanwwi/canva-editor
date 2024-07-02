@@ -1,10 +1,10 @@
 import React from "react";
-import MainRoutes from "./routes/MainRoutes";
+import EditorPage from "./pages/EditorPage";
 
 function App() {
   return (
     <div className="App">
-      <MainRoutes />
+      <EditorPage />
     </div>
   );
 }
