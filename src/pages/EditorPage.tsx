@@ -14,6 +14,7 @@ interface TextElement {
   isEditing: boolean;
   x: number;
   y: number;
+  fontSize: number;
 }
 
 interface CostumesType {
@@ -51,6 +52,7 @@ const EditorPage: React.FC = () => {
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [textElements, setTextElements] = useState<TextElement[]>([]);
   const [canvasSize, setCanvasSize] = useState(700);
+  const [fontSize, setFontSize] = useState(16);
 
   const [isDragging, setIsDragging] = useState(false);
   const [draggingElementId, setDraggingElementId] = useState<number | null>(
@@ -81,6 +83,32 @@ const EditorPage: React.FC = () => {
     }
   };
 
+  const increaseFontSize = () => {
+    setTextElements((prevElements) =>
+      prevElements.map((element) => ({
+        ...element,
+        fontSize:
+          element.fontSize < 50 ? element.fontSize + 2 : element.fontSize,
+      }))
+    );
+    setFontSize((prevFontSize) =>
+      prevFontSize < 50 ? prevFontSize + 2 : prevFontSize
+    );
+  };
+
+  const decreaseFontSize = () => {
+    setTextElements((prevElements) =>
+      prevElements.map((element) => ({
+        ...element,
+        fontSize:
+          element.fontSize > 8 ? element.fontSize - 2 : element.fontSize,
+      }))
+    );
+    setFontSize((prevFontSize) =>
+      prevFontSize > 8 ? prevFontSize - 2 : prevFontSize
+    );
+  };
+
   const handleOpenModal = () => {
     setShowModal(true);
   };
@@ -107,6 +135,7 @@ const EditorPage: React.FC = () => {
       isEditing: false,
       x: 50,
       y: 50,
+      fontSize: fontSize,
     };
     setTextElements([...textElements, newTextElement]);
   };
@@ -196,9 +225,9 @@ const EditorPage: React.FC = () => {
               Добавить текст
             </h3>
             <div className="font-size">
-              <button>+</button>
-              <div className="fz">default</div>
-              <button>-</button>
+              <button onClick={increaseFontSize}>+</button>
+              <div className="fz">{fontSize}</div>
+              <button onClick={decreaseFontSize}>-</button>
             </div>
 
             <div className="canva-size">
@@ -369,6 +398,7 @@ const EditorPage: React.FC = () => {
                   isDragging && draggingElementId === element.id
                     ? "grabbing"
                     : "default",
+                fontSize: element.fontSize,
               }}
               onMouseDown={(e) => handleMouseDown(element.id, e)}
             >
