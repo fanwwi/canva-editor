@@ -325,7 +325,6 @@ const EditorPage: React.FC = () => {
                           ? "grabbing"
                           : "default",
                     }}
-                    onMouseDown={() => handleCostumeMouseDown(+costume.id)}
                   >
                     <img src={costume.costume} alt="Costume" />
                   </div>
