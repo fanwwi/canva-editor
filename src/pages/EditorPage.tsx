@@ -37,6 +37,9 @@ interface AssessoirsType {
 }
 
 const EditorPage: React.FC = () => {
+  useEffect(() => {
+    localStorage.setItem("currentAccount", "1");
+  });
   const accountId = localStorage.getItem("currentAccount");
   const { userCostumes } = useAppSelector((state) => state.accounts);
   const { userAss } = useAppSelector((state) => state.accounts);
@@ -63,13 +66,18 @@ const EditorPage: React.FC = () => {
     y: 0,
   });
 
+  const [editingTextElementId, setEditingTextElementId] = useState<
+    number | null
+  >(null);
+  const [editingText, setEditingText] = useState<string>("");
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(getUserCostumes(accountId!));
     dispatch(getOneAccount(accountId!));
     dispatch(getUserAss(accountId!));
-  }, [dispatch, accountId]);
+  }, [dispatch]);
 
   const increaseCanvasSize = () => {
     if (canvasSize < 1000) {
@@ -198,6 +206,30 @@ const EditorPage: React.FC = () => {
 
   const handleCostumeMouseUp = () => {
     setIsDraggingCostumes(false);
+  };
+
+  const handleDoubleClick = (id: number) => {
+    const element = textElements.find((element) => element.id === id);
+    if (element) {
+      setEditingTextElementId(id);
+      setEditingText(element.text);
+    }
+  };
+
+  const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingText(event.target.value);
+  };
+
+  const saveTextElement = () => {
+    setTextElements((prevElements) =>
+      prevElements.map((element) =>
+        element.id === editingTextElementId
+          ? { ...element, text: editingText }
+          : element
+      )
+    );
+    setEditingTextElementId(null);
+    setEditingText("");
   };
 
   return (
@@ -401,16 +433,32 @@ const EditorPage: React.FC = () => {
                 fontSize: element.fontSize,
               }}
               onMouseDown={(e) => handleMouseDown(element.id, e)}
+              onDoubleClick={() => handleDoubleClick(element.id)}
             >
-              <div
-                style={{
-                  outline: element.isEditing ? "1px solid blue" : "none",
-                  padding: "5px",
-                  cursor: "text",
-                }}
-              >
-                {element.text}
-              </div>
+              {editingTextElementId === element.id ? (
+                <input
+                  type="text"
+                  value={editingText}
+                  onChange={handleTextChange}
+                  onBlur={saveTextElement}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      saveTextElement();
+                    }
+                  }}
+                  autoFocus
+                />
+              ) : (
+                <div
+                  style={{
+                    outline: element.isEditing ? "1px solid blue" : "none",
+                    padding: "5px",
+                    cursor: "text",
+                  }}
+                >
+                  {element.text}
+                </div>
+              )}
             </div>
           ))}
         </div>
